@@ -5,6 +5,9 @@ from app.core.db_settings import DBSettings
 
 
 def __get_env() -> DBSettings:
+    '''
+    load variables env
+    '''
     load_dotenv()
     return DBSettings(
         HOST=os.getenv("HOST"),
@@ -16,5 +19,8 @@ def __get_env() -> DBSettings:
 
 
 def database_url_aiomysql() -> str:
+    ''''
+    create url database
+    '''
     db_set = __get_env()
     return f"mysql+aiomysql://{db_set.USER}:{db_set.PASSWD}@{db_set.HOST}:{db_set.PORT}/{db_set.DB_NAME}"
