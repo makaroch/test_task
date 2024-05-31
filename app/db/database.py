@@ -17,8 +17,7 @@ class DBWorker:
             await conn.run_sync(Base.metadata.create_all)
 
     def __convert_answer_to_request(self, answer: list[TRequest]) -> list[DataRequest]:
-        return [DataRequest(id=item.id, client_id=item.client_id, area_id=item.area_id, data=item.data) for item in
-                answer]
+        return [DataRequest.model_validate(row, from_attributes=True) for row in answer]
 
     async def select_request_filter_client(self, client_name: str) -> list[DataRequest]:
         async with self.session() as conn:
@@ -29,7 +28,7 @@ class DBWorker:
                 .filter(TClient.fullname_client == client_name)
             )
             res = await conn.execute(query)
-        return self.__convert_answer_to_request(list(map(lambda x: x[0], res)))
+            return self.__convert_answer_to_request(res.scalars().all())
 
     async def select_request_filter_area(self, area_name: str) -> list[DataRequest]:
         async with self.session() as conn:
@@ -41,7 +40,7 @@ class DBWorker:
             )
             print(query.compile(compile_kwargs={"literal_binds": True}))
             res = await conn.execute(query)
-        return self.__convert_answer_to_request(list(map(lambda x: x[0], res)))
+            return self.__convert_answer_to_request(res.scalars().all())
 
     async def select_request_filter_area_client(self, area_name: str, client_name: str) -> list[DataRequest]:
         async with self.session() as conn:
@@ -54,4 +53,4 @@ class DBWorker:
                 .filter(TClient.fullname_client == client_name)
             )
             res = await conn.execute(query)
-        return self.__convert_answer_to_request(list(map(lambda x: x[0], res)))
+            return self.__convert_answer_to_request(res.scalars().all())
