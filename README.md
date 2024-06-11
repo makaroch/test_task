@@ -4,3 +4,4 @@
 * USER = your_user
 * PASSWD = your_passwd
 * DB_NAME = your_db_name
+* fdff =f fgg
